@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "first": "Carson",
+    "last": "Gross",
+    "phone": "123-456-7890",
+    "email": "carson@example.comz",
+    "errors": {}
+  },
+  {
+    "id": 2,
+    "first": "Musab",
+    "last": "Nazir",
+    "phone": "911",
+    "email": "musab@example2.com",
+    "errors": {}
+  },
+  {
+    "id": 3,
+    "first": "Joe",
+    "last": "Blow",
+    "phone": "123-456-7890",
+    "email": "joe@example.com",
+    "errors": {}
+  }
+]
