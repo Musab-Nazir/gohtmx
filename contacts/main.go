@@ -20,8 +20,10 @@ func runServer() {
 	router := http.NewServeMux()
 	// index
 	router.HandleFunc("/", indexHandler)
-	// Contacts
+	// get
 	router.HandleFunc("/contacts", contactHandler)
+	// post
+	router.HandleFunc("/contacts/new", newContactHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
@@ -49,10 +51,38 @@ func contactHandler(w http.ResponseWriter, request *http.Request) {
 	}
 
 	if name != "" {
-		log.Printf("Got query param: %s", name)
 		data = lo.Filter(data, func(contact Contact, i int) bool {
 			return contact.Name == name
 		})
+	}
+
+	if err := tmpl.ExecuteTemplate(w, "content", data); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to execute template", http.StatusInternalServerError)
+	}
+}
+
+func newContactHandler(w http.ResponseWriter, request *http.Request) {
+	// get query params
+	name := request.FormValue("name")
+	email := request.FormValue("email")
+	// parse template
+	tmpl := template.Must(template.ParseFiles("templates.html"))
+	// get contact data
+	data, err := loadContacts("contacts.json")
+	if err != nil {
+		log.Println("can't load contacts", err)
+	}
+
+	if name != "" && email != "" {
+		c := Contact{Name: name, Email: email}
+		data = append(data, c)
+	}
+
+	// write json file
+	err = saveContacts("contacts.json", data)
+	if err != nil {
+		log.Println("can't save new contacts file", err)
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "content", data); err != nil {
@@ -82,4 +112,23 @@ func loadContacts(filename string) ([]Contact, error) {
 	}
 
 	return contacts, nil
+}
+
+func saveContacts(filename string, contacts []Contact) error {
+	// Marshal the contacts slice to JSON
+	data, err := json.MarshalIndent(contacts, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	// Create or open the file for writing
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Write the JSON data to the file
+	_, err = file.Write(data)
+	return err
 }
