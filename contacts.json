@@ -1,26 +1,17 @@
 [
   {
     "id": 1,
-    "first": "Carson",
-    "last": "Gross",
-    "phone": "123-456-7890",
-    "email": "carson@example.comz",
-    "errors": {}
+    "name": "Carson",
+    "email": "carson@example.comz"
   },
   {
     "id": 2,
-    "first": "Musab",
-    "last": "Nazir",
-    "phone": "911",
-    "email": "musab@example2.com",
-    "errors": {}
+    "name": "Musab",
+    "email": "musab@example2.com"
   },
   {
     "id": 3,
-    "first": "Joe",
-    "last": "Blow",
-    "phone": "123-456-7890",
-    "email": "joe@example.com",
-    "errors": {}
+    "name": "Joe",
+    "email": "joe@example.com"
   }
 ]

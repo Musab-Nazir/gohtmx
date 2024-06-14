@@ -1,0 +1,93 @@
+{{ block "index" . }}
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>Contacts</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+    <style>
+      table {
+          width: 100%;
+          border-collapse: collapse;
+      }
+      table, th, td {
+          border: 1px solid black;
+      }
+      th, td {
+          padding: 10px;
+          text-align: left;
+      }
+      th {
+          background-color: #f2f2f2;
+      }
+    </style>
+</head>
+
+<body>
+<h1>Welcome to my contacts app</h1>
+    {{ template "searchForm" .}}
+  <br/>
+<div id="table">
+</div>
+<br/>
+<div>
+    {{ template "postForm" .}}
+</div>    
+</body>
+</html> 
+{{ end }}
+
+{{ block "searchForm" . }}
+  <form hx-get="/contacts" hx-target="#table">
+     <label for="name">Search Name</label>
+     <input id="name" type="text" name="name"/>
+     <input type="submit" value="Search"/>
+  </form>
+{{ end }}
+
+{{ block "postForm" . }}
+  <form hx-post="/contacts/new">
+     <label for="name">Name</label>
+     <input id="name" type="text" name="name"/>
+     <label for="email">Email</label>
+     <input id="email" type="text" name="email"/>
+
+     <input type="submit" value="Create"/>
+  </form>
+{{ end }}
+
+{{ block "postform" . }}
+  <form action="/contacts/new" method="post">
+     <label for="name">Name</label>
+     <input id="name" type="text" name="name"/>
+
+     <label for="email">Email</label>
+     <input id="email" type="text" name="email"/>
+
+     <input type="submit" value="Search"/>
+  </form>
+{{ end }}
+
+{{ block "content" .}}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Email}}</td>
+                <td><a href="/contacts/{{.ID}}/edit">Edit</a>
+                    <a href="/contacts/{{.ID}}">View</a>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{ end }}

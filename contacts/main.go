@@ -18,32 +18,47 @@ func main() {
 
 func runServer() {
 	router := http.NewServeMux()
-
+	// index
+	router.HandleFunc("/", indexHandler)
 	// Contacts
 	router.HandleFunc("/contacts", contactHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
+func indexHandler(w http.ResponseWriter, request *http.Request) {
+	// parse template
+	tmpl := template.Must(template.ParseFiles("templates.html"))
+
+	if err := tmpl.ExecuteTemplate(w, "index", nil); err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to execute template", http.StatusInternalServerError)
+	}
+}
+
 func contactHandler(w http.ResponseWriter, request *http.Request) {
 	// get query params
 	query := request.URL.Query()
-	name := query.Get("q")
+	name := query.Get("name")
 	// parse template
-	tmpl := template.Must(template.ParseFiles("public/index.html"))
+	tmpl := template.Must(template.ParseFiles("templates.html"))
 	// get contact data
 	data, err := loadContacts("contacts.json")
+	if err != nil {
+		log.Println("can't load contacts", err)
+	}
+
 	if name != "" {
 		log.Printf("Got query param: %s", name)
 		data = lo.Filter(data, func(contact Contact, i int) bool {
-			return contact.FirstName == name
+			return contact.Name == name
 		})
 	}
-	if err != nil {
+
+	if err := tmpl.ExecuteTemplate(w, "content", data); err != nil {
 		log.Println(err)
+		http.Error(w, "Failed to execute template", http.StatusInternalServerError)
 	}
-	// return view
-	tmpl.Execute(w, data)
 }
 
 func loadContacts(filename string) ([]Contact, error) {
