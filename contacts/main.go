@@ -132,3 +132,8 @@ func saveContacts(filename string, contacts []Contact) error {
 	_, err = file.Write(data)
 	return err
 }
+
+type Contact struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
